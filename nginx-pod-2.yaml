@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cfg-password
+data:
+  password_key: YWJjZDEyMzQ=
+  
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod-2
+  namespace: default
+  labels:
+    app: nginx
+spec:
+  containers:
+  - image: nginx:latest
+    imagePullPolicy: Always
+    name: nginx-pod-2
+    ports:
+      - containerPort: 80 
+        protocol: TCP
+    volumeMounts:
+    - mountPath: /usr/share/nginx/html
+      name: password
+      readOnly: true
+  volumes:
+  - name: password
+    configMap:
+      name: cfg-password
+      items:
+        - key: password_key
+          path: index.html
+
